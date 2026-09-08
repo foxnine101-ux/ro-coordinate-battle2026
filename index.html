@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>アイドル図鑑 解放条件表 | マジカル☆コーデバトル2026</title>
+<meta name="description" content="ラグナロクオンライン「マジカル☆コーデバトル」のアイドル解放条件を、対象クエスト・MD・所持条件ごとに整理。クエストスキップに必要な奇妙な石片の個数とコスパも掲載した非公式ファンページ。">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FDFAF4'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23E8B9C2'%3E%E2%9D%80%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="アイドル図鑑 解放条件表 | マジカル☆コーデバトル2026">
+<meta property="og:description" content="アイドルの解放条件を対象クエストごとに整理。クエストスキップの石片コストとコスパ付き。">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --ground:#FDFAF4;
+  --ground-2:#FFFDF8;
+  --surface:#FFFFFF;
+  --surface-2:#FAF5EF;
+  --sakura:#FBEFF1;
+  --sakura-2:#F4D8DE;
+  --line:#EFE6DB;
+  --line-strong:#E1D5C7;
+  --ink:#4A423D;
+  --ink-2:#6F635C;
+  --muted:#A3968C;
+  --accent:#B4707F;
+  --accent-2:#E8B9C2;
+  --accent-soft:#FCF2F4;
+  --gold:#A88B4E;
+  --gold-soft:#F8F1E0;
+  --done:#6E9C81;
+  --done-soft:#F1F7F2;
+  --hero-1:#FFFCF4;
+  --hero-2:#FDF3EC;
+  --hero-3:#FBEDF0;
+  --petal:#F2D6DC;
+  --shadow:0 1px 2px rgba(74,66,61,.04), 0 8px 24px -18px rgba(74,66,61,.35);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Zen Kaku Gothic New",system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:26px 18px 80px;display:flex;flex-direction:column;gap:22px}
+
+/* ---- hero ---- */
+.masthead{
+  position:relative;overflow:hidden;isolation:isolate;
+  border-radius:20px;padding:34px 30px 28px;
+  background:linear-gradient(135deg,var(--hero-1) 0%,var(--hero-2) 55%,var(--hero-3) 100%);
+  border:1px solid var(--line);
+  display:flex;flex-direction:column;gap:13px;
+}
+.hearts{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.hearts i{
+  position:absolute;color:var(--petal);font-style:normal;line-height:1;
+  opacity:.55;
+}
+.hearts i:nth-child(1){font-size:64px;top:-6px;right:5%;transform:rotate(14deg)}
+.hearts i:nth-child(2){font-size:26px;top:88px;right:19%;transform:rotate(-22deg);opacity:.4}
+.hearts i:nth-child(3){font-size:38px;bottom:6px;right:31%;transform:rotate(30deg);opacity:.35}
+.hearts i:nth-child(4){font-size:20px;top:26px;left:38%;transform:rotate(-8deg);opacity:.32}
+.hearts i:nth-child(5){font-size:30px;bottom:24px;left:14%;transform:rotate(20deg);opacity:.3}
+
+.eyebrow{
+  font-family:"Mochiy Pop One","Zen Maru Gothic",sans-serif;
+  font-size:11px;letter-spacing:.16em;
+  color:var(--accent);align-self:flex-start;
+  background:var(--surface);border:1px solid var(--accent-2);
+  border-radius:999px;padding:3px 14px;
+}
+h1{
+  font-family:"Mochiy Pop One","Zen Maru Gothic",sans-serif;
+  font-size:clamp(26px,5.4vw,40px);
+  line-height:1.3;margin:0;text-wrap:balance;letter-spacing:.03em;
+  color:var(--accent);
+  text-shadow:0 2px 0 #fff;
+}
+h1 .star{color:var(--accent-2)}
+.sub{color:var(--ink-2);margin:0;max-width:58ch;font-size:14px}
+.period{
+  display:inline-flex;align-items:center;gap:8px;align-self:flex-start;
+  background:var(--surface);border:1px solid var(--line-strong);
+  border-radius:999px;padding:4px 15px;font-size:12.5px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums;
+}
+.period b{color:var(--accent);font-weight:700}
+
+/* ---- progress ---- */
+.progress{
+  background:var(--surface);border:1px solid var(--line);border-radius:18px;
+  padding:18px 22px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);
+}
+.progress-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.progress-label{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.progress-num{font-family:"Mochiy Pop One",sans-serif;font-size:23px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.progress-num small{font-size:13px;color:var(--muted);font-family:inherit}
+.bar{height:9px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));border-radius:99px;transition:width .25s ease}
+.progress-note{font-size:12px;color:var(--muted);margin:0}
+
+/* ---- controls ---- */
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.search{
+  flex:1 1 220px;min-width:180px;
+  background:var(--surface);border:1px solid var(--line-strong);border-radius:999px;
+  padding:8px 17px;color:var(--ink);font:inherit;font-size:14px;
+}
+.search::placeholder{color:var(--muted)}
+.search:focus-visible{outline:2px solid var(--accent-2);outline-offset:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-2);
+  border-radius:999px;padding:5px 14px;font:inherit;font-size:13px;cursor:pointer;
+}
+.chip[aria-pressed="true"]{background:var(--sakura);border-color:var(--accent-2);color:var(--accent);font-weight:700}
+.chip:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+
+/* ---- list ---- */
+.group-head{display:flex;align-items:center;gap:10px;margin:10px 0 -4px}
+.group-head h2{
+  font-family:"Mochiy Pop One",sans-serif;font-size:14px;margin:0;letter-spacing:.05em;color:var(--ink-2);
+}
+.group-head h2::before{content:"❀ ";color:var(--accent-2)}
+.group-head .rule{flex:1;height:1px;background:var(--line)}
+.group-head .count{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.rows{display:flex;flex-direction:column;gap:8px}
+.row{
+  display:grid;grid-template-columns:auto 1fr;gap:12px;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:14px 17px;
+}
+.row.is-done{background:var(--done-soft);border-color:#E3EDE6}
+.row.is-done .q{color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--muted)}
+.tick{
+  appearance:none;width:20px;height:20px;margin:4px 0 0;border-radius:7px;
+  border:1.5px solid var(--line-strong);background:var(--surface);cursor:pointer;flex:none;
+}
+.tick:checked{background:var(--done);border-color:var(--done)}
+.tick:checked::after{content:"";display:block;width:5px;height:9px;margin:2px auto 0;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
+.tick:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.body{display:flex;flex-direction:column;gap:8px;min-width:0}
+.q{font-weight:700;line-height:1.5;margin:0;word-break:break-word}
+.q .n{color:var(--muted);font-weight:400;font-size:12.5px;margin-left:7px;font-variant-numeric:tabular-nums}
+.idols{display:flex;flex-wrap:wrap;gap:5px}
+.idol{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--surface-2);border-radius:999px;padding:2px 11px 2px 3px;font-size:12.5px;color:var(--ink-2);
+}
+.rk{
+  font-size:10px;line-height:1;font-weight:700;
+  padding:4px 5px;border-radius:999px;background:#EFE9E1;color:var(--muted);
+  font-variant-numeric:tabular-nums;min-width:24px;text-align:center;
+}
+.rk.hi{background:var(--gold-soft);color:var(--gold)}
+.rk.top{background:var(--sakura-2);color:var(--accent)}
+.rk.unk{background:transparent;border:1px dashed var(--line-strong);color:var(--muted)}
+
+/* ---- skip / difficulty ---- */
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.skip{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;
+  border-radius:999px;padding:2px 11px;background:var(--gold-soft);color:var(--gold);font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.skip.no{background:transparent;border:1px dashed var(--line-strong);color:var(--muted);font-weight:400}
+.eff{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.eff b{color:var(--accent)}
+.hard{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
+.hardbar{width:56px;height:5px;border-radius:99px;background:var(--surface-2);overflow:hidden;flex:none}
+.hardbar i{display:block;height:100%;background:var(--accent-2);border-radius:99px}
+.row.tip{border-color:var(--accent-2);background:var(--accent-soft)}
+.row.tip .q::before{
+  content:"おすすめ";font-size:10px;letter-spacing:.06em;font-weight:700;
+  background:var(--sakura-2);color:var(--accent);border-radius:999px;padding:3px 9px;margin-right:8px;vertical-align:2px;
+}
+.rank-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0}
+.rank-list li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.rank-list li:last-child{border-bottom:none}
+.rank-list .qn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-list .c{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12.5px}
+.rank-list .v{font-family:"Mochiy Pop One",sans-serif;color:var(--accent);font-variant-numeric:tabular-nums;font-size:13px}
+
+.empty{color:var(--muted);font-size:13.5px;padding:24px;text-align:center;border:1px dashed var(--line-strong);border-radius:14px}
+
+/* ---- reference panels ---- */
+.ref{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow)}
+.panel h3{font-family:"Mochiy Pop One",sans-serif;font-size:13.5px;margin:0 0 12px;letter-spacing:.04em;color:var(--ink-2)}
+.panel h3::before{content:"❀ ";color:var(--accent-2)}
+.panel table{width:100%;border-collapse:collapse;font-size:13.5px}
+.panel th,.panel td{text-align:left;padding:7px 4px;border-bottom:1px solid var(--line)}
+.panel th{font-size:11.5px;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.panel td.num{text-align:right;font-variant-numeric:tabular-nums}
+.panel tr:last-child td{border-bottom:none}
+.panel ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:var(--ink-2)}
+.panel ul li::marker{color:var(--accent-2)}
+.tablewrap{overflow-x:auto}
+
+footer{color:var(--muted);font-size:12px;line-height:1.8;border-top:1px solid var(--line);padding-top:18px}
+footer a{color:var(--accent)}
+.sync{font-size:11.5px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="hearts" aria-hidden="true"><i>&#10048;</i><i>&#10048;</i><i>&#10047;</i><i>&#10048;</i><i>&#10047;</i></div>
+    <div class="eyebrow">マジカル&#9734;コーデバトル 2026</div>
+    <h1>アイドル図鑑 <span class="star">&#10048;</span> 解放条件表</h1>
+    <p class="sub">コーデバトルの相手（アイドル）は、それぞれ別のクエスト・MD・所持条件で解放されます。条件ごとにまとめたので、未クリアのものから潰していくと効率よく図鑑が埋まります。</p>
+    <div class="period">開催 <b>2026/9/8</b> メンテ後 〜 <b>9/29</b> メンテ開始</div>
+  </header>
+
+  <section class="progress" aria-label="達成状況">
+    <div class="progress-top">
+      <span class="progress-label">クリア済みの条件</span>
+      <span class="progress-num"><span id="pdone">0</span><small> / <span id="ptotal">0</span> 条件</small></span>
+    </div>
+    <div class="bar"><span id="pbar" style="width:0%"></span></div>
+    <p class="progress-note">解放できるアイドル数：<b id="pidol">0</b> 体 <span class="sync" id="sync"></span></p>
+  </section>
+
+  <div class="controls">
+    <input class="search" id="search" type="search" placeholder="クエスト名・アイドル名で絞り込み" aria-label="検索">
+    <div class="chips" id="cats" role="group" aria-label="種別で絞り込み"></div>
+    <div class="chips">
+      <button class="chip" id="hideDone" aria-pressed="false" type="button">未クリアのみ</button>
+    </div>
+    <div class="chips" id="sorts" role="group" aria-label="並び替え"></div>
+  </div>
+
+  <div id="list"></div>
+
+  <section class="ref">
+    <div class="panel">
+      <h3>ランク別のバトル報酬</h3>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>アイドルランク</th><th class="num">初勝利</th><th class="num">デイリー</th></tr></thead>
+        <tbody>
+          <tr><td>ランク1〜2</td><td class="num">100</td><td class="num">1,000</td></tr>
+          <tr><td>ランク3</td><td class="num">100</td><td class="num">1,100</td></tr>
+          <tr><td>ランク4〜5</td><td class="num">100</td><td class="num">1,200</td></tr>
+          <tr><td>ランク6〜7</td><td class="num">100</td><td class="num">1,300</td></tr>
+          <tr><td>ランク8〜9</td><td class="num">100</td><td class="num">1,400</td></tr>
+          <tr><td>ランク10</td><td class="num">100</td><td class="num">1,500</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="progress-note" style="margin-top:9px">初勝利＝ランク経験値、デイリー＝マジカルコーデジェム。高ランクほど1戦あたりの旨みが大きいので、条件が重いクエストほど先に片付ける価値あり。</p>
+    </div>
+
+    <div class="panel">
+      <h3>図鑑達成でもらえるもの</h3>
+      <ul>
+        <li><b>アイドルランク5</b> 到達 → 称号「絶対バズる」</li>
+        <li><b>アイドルランク8</b> 到達 → 衣装「聖なる天鏡」＋称号「華麗に変身」</li>
+        <li><b>勝利数マイルストーン</b> → シーズナルシャドウエンチャントチケット複数枚</li>
+      </ul>
+      <h3 style="margin-top:16px">ポイントの主な使い道</h3>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>交換品</th><th class="num">必要pt</th><th class="num">上限</th></tr></thead>
+        <tbody>
+          <tr><td>シーズナルシャドウエンチャントチケットI</td><td class="num">1,500</td><td class="num">60</td></tr>
+          <tr><td>シーズナルシャドウ精錬チケット</td><td class="num">1,500</td><td class="num">60</td></tr>
+          <tr><td>シーズナルシャドウ交換チケット</td><td class="num">10,000</td><td class="num">1</td></tr>
+          <tr><td>セレスティアル精錬メダル(金)</td><td class="num">2,500</td><td class="num">20</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>石片のコスパ上位</h3>
+      <ol class="rank-list" id="cost"></ol>
+      <p class="progress-note" style="margin-top:10px">「100個あたり何体解放できるか」で並べたもの。石片は<b>コーデキャプター(5,000pt)で3個</b>手に入るので、石片1個 ≒ 約1,667pt が実質レート。イベント内で全部スキップすると約1,000個＝166万pt必要で現実的ではないため、上位だけ狙うのが正解。</p>
+    </div>
+
+    <div class="panel">
+      <h3>スキップの前に知っておくこと</h3>
+      <ul>
+        <li>スキップには<b>BaseLvなどの開始条件</b>を満たしている必要あり。</li>
+        <li>消費は<b>奇妙な石片 → 不思議な石片</b>の順。</li>
+        <li><b>MDそのものはスキップ不可</b>。ただし前提の「生体工学研究所侵入」(25個)を飛ばせば、生体MD系の7体に一気に手が届く。</li>
+        <li>「The Sign 3部」を通しでやるなら1部60＋2部40＋3部20＝<b>120個</b>。</li>
+        <li>カプラポイント条件の10体は<b>石片もクエストも不要</b>。最優先。</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p style="margin:0 0 10px">当ページは個人が趣味の範囲で作成した<b>非公式のファンページ</b>です。運営元とは一切関係ありません。<br>
+    スキップ可否と必要石片数は公式「クエスト」ガイドのクエストスキップ表、アイドル情報は「マジカル☆コーデバトル」特設ページより。公式の図鑑表を条件ごとに再編したものです。<br>
+    ランク10のアイドルは開催時点で非公開（？？？）。一部アイドルはランク表記が確認できなかったため「R?」としています。数値は必ず<a href="https://ragnarokonline.gungho.jp/special/coordinate-battle2026/" target="_blank" rel="noopener">公式ページ</a>で最終確認してください。</p>
+    <p style="margin:0">
+      &copy; Gravity Co., Ltd. &amp; Lee MyoungJin(studio DTDS). All rights reserved.<br>
+      &copy; GungHo Online Entertainment, Inc. All Rights Reserved.<br>
+      当コンテンツの再利用（再転載・配布など）は、禁止しています。
+    </p>
+  </footer>
+</div>
+
+<script>
+const CATS={story:"クエスト / エピソード",md:"メモリアルダンジョン",cond:"所持・転職などの条件",none:"条件なし",unknown:"未公開"};
+const DATA=[
+{q:"条件なし",c:"none",i:[["ホルグレン",1],["式",1],["プレミィ",1]]},
+{q:"「マラン島ニャドベンチャー」クリア",c:"story",i:[["ホムニャ&ニャンスン",1]]},
+{q:"「通行証クエスト」クリア",s:15,sn:"公式表記は「通行手形クエスト」",c:"story",i:[["ダイガツ",1]]},
+{q:"「冒険者達との出会い」クリア",c:"story",i:[["テューリアン",2],["マークイシャ",2],["マギスティン",2],["アルプオカート",2]]},
+{q:"「フレイムヴァレーへの道」クリア",s:10,sn:"",c:"story",i:[["タマリン",2]]},
+{q:"「七王家とユミルの心臓」クリア",s:100,sn:"",c:"story",i:[["クルックス",2],["ピーター・ハイネン",3],["フリードリヒ・ハイネン",3],["ポー・リハルト",3],["クロネカー・ハイネン",4],["ニーヒル・ハイネン",8],["S・J・アーネストウルフ",8],["スピーカ・ネリウス",9],["スキア・ネリウス",9],["ビジョウ",9]]},
+{q:"「エルンスト王子とゲオルグ家」クリア",c:"story",i:[["キャサリン・ゲオルグ",4]]},
+{q:"「レベンブルグ家の絆」クリア",c:"story",i:[["ヴォルフ・レベンブルグ",3],["マイアー・レベンブルグ",3],["ヘルムト・レベンブルグ",4],["アグネス・レベンブルグ",8]]},
+{q:"「ウィグナー家の心の箱」クリア",c:"story",i:[["カトリン・ウィグナー",3],["アイザック・ウィグナー",4]]},
+{q:"「ウィグナー家の心の箱(おまけ)」クリア",c:"story",i:[["ユルゲン・ウィグナー",5]]},
+{q:"「テラグローリア」クリア",s:100,sn:"",c:"story",i:[["フィローテス",3],["ルッキー",3],["ゴニー",3],["エレナ・ヴォルコヴァ",5],["エスト・ラブロイ",5],["レイジー",7],["リードシー",7],["コトネス",7],["ディエン",7],["アイゼン・ヴェルナー",9]]},
+{q:"「イルシオン」クリア",s:100,sn:"",c:"story",i:[["アース",4],["カヤ・トース",4],["エリュミナ",7],["ミグエル",8]]},
+{q:"「賢者の遺産」クリア",s:100,sn:"",c:"story",i:[["邸宅管理者ベータ",5],["自動お掃除機オメガ",5],["邸宅管理者アルファ",6],["ニルレム",8],["スウィーティ",9]]},
+{q:"「夢見る作家」クリア",c:"story",i:[["ユッブ",2],["オリバーヒルベルト",7]]},
+{q:"「ファンタスマゴリカ」クリア",s:40,sn:"",c:"story",i:[["アルクイエン",2]]},
+{q:"「地下遺跡アドベンチャー」クリア",s:50,sn:"",c:"story",i:[["ベリティ",2],["プルット",2]]},
+{q:"「エクラージュの王」クリア",c:"story",i:[["ヒシエ",3],["魔学者エイヴァント",4],["カルデュイ",5]]},
+{q:"「悠久なる絆」クリア",c:"story",i:[["エスラン",2],["ロベル",2]]},
+{q:"「魔神殿」クリア",s:100,sn:"",c:"story",i:[["アハト(男性の姿)",8],["アハト(女性の姿)",8],["モロク",9]]},
+{q:"「紫色の竜」クリア",c:"story",i:[["ロキ",3],["ニーズヘッグ",3]]},
+{q:"「献金クエスト」クリア",s:10,sn:"",c:"story",i:[["ネマ神官",2]]},
+{q:"「宝石クエスト」クリア",s:10,sn:"",c:"story",i:[["ジェド大神官",3]]},
+{q:"「聖域の秘密」クリア",s:15,sn:"",c:"story",i:[["ニルエン大神官",null]]},
+{q:"「大神官」クエスト",c:"story",i:[["教皇",null]]},
+{q:"「祈りの方向」クリア",s:100,sn:"",c:"story",i:[["マラム",6],["ミリアム",6],["スアド",6]]},
+{q:"「三ヶ国への報告書」クリア",s:40,sn:"",c:"story",i:[["司令官アジフ",2]]},
+{q:"「猫耳と尻尾の男」クリア",s:30,sn:"",c:"story",i:[["シャイ",2],["チェシャー",2]]},
+{q:"「魔王モロク追跡」クリア",c:"story",i:[["キド",2],["リーン",2]]},
+{q:"「レイヤン・ムーア」クリア",c:"story",i:[["レイヤン・ムーア",2]]},
+{q:"「レッケンベル社の噂」クリア",s:30,sn:"",c:"story",i:[["ボルセブ",6]]},
+{q:"「キル・ハイル」クリア",s:55,sn:"",c:"story",i:[["エリー",2],["キエル",4]]},
+{q:"「猫達の定期集会」クリア",c:"story",i:[["トーマス村長",2],["スターキャンディ",2]]},
+{q:"「セドラを愛する者」クリア",c:"story",i:[["セドラ・テレ",2]]},
+{q:"「呪われた人魚」クリア",c:"story",i:[["ネイラ",2]]},
+{q:"「ペリー号のゴースト」クリア",c:"story",i:[["ディワタ",2]]},
+{q:"「新任看護師と病院」クリア",s:25,sn:"",c:"story",i:[["看護師ラズ",2],["看護師マエン",2]]},
+{q:"「ロックリッジ」クリア",s:25,sn:"",c:"story",i:[["アイアット・ワープ",2],["イヴォカ・スクーディー",2],["ジョニー・ジェイムス",2]]},
+{q:"「The Sign 3部」クリア",s:20,sn:"前提の1部60個・2部40個も別途必要",c:"story",i:[["メッツ",2]]},
+{q:"「料理作成」クリア",c:"story",i:[["シャルル・オルレアン",4],["ニュー",4]]},
+{q:"「ポリン団 入団試験③」クリア",c:"story",i:[["ヒュッケ",4]]},
+{q:"MD「チャールストン工場」初回クリア",c:"md",i:[["チャールストン1号",3],["チャールストン2号",3]]},
+{q:"MD「古のグラストヘイム」初回クリア",c:"md",i:[["ハインリヒ",4]]},
+{q:"MD「古のグラストヘイム(ハード)」初回クリア",c:"md",i:[["バルムント",3]]},
+{q:"MD「グラストヘイムの没落」前半クリア",c:"md",i:[["オスカー",6],["シュミッツ",6],["ヒメルメズ",8]]},
+{q:"MD「生体工学研究所の記録(会話モード)」途中までクリア",c:"md",i:[["セシル=ディモン",3],["ハワード=アルトアイゼン",3],["カトリーヌ=ケイロン",4],["エレメス=ガイル",4],["マーガレッタ=ソリン",5]]},
+{q:"MD「生体工学研究所の記録(会話モード)」全部屋調査済",c:"md",i:[["セイレン=ウィンザー",5]]},
+{q:"MD「生体工学研究所の記録(会話モード)」最後までクリア",c:"md",i:[["無名のソードマン",6]]},
+{q:"MD「サラの記憶」初回クリア",c:"md",i:[["大長老アイリン",3]]},
+{q:"MD「フェンリルとサラ」初回クリア",c:"md",i:[["サラ",null]]},
+{q:"MD「飛行船襲撃」初回クリア",c:"md",i:[["船長ペルロック",2],["ケイオス",3],["アイリス",3]]},
+{q:"MD「ゲフェン魔法大会」ブラック・カネイリーを1回撃破",c:"md",i:[["リディア",3]]},
+{q:"MD「ゲフェン魔法大会」フェイ・カナビアンの会話コンプリート",c:"md",i:[["フェイ・カナビアン",3]]},
+{q:"MD「ゲフェン魔法大会」フェンリルを1回撃破",c:"md",i:[["フェンリス・フェンリル",4]]},
+{q:"MD「ゲフェン魔法大会」応援状況コンプリート",c:"md",i:[["ゲフェンアカデミーマスター",4]]},
+{q:"MD「魔神の塔」途中までクリア",c:"md",i:[["ルシル",4]]},
+{q:"MD「真昼の弦月(ノーマル)」初回クリア",c:"md",i:[["ルーミン",null]]},
+{q:"MD「真昼の弦月(ハード)」初回クリア",c:"md",i:[["クトルラナックス",null]]},
+{q:"カプラポイント 5,000pt以上所持",c:"cond",i:[["カプラディフォルテー",2],["カプラテーリング",2],["カプラビニット",2],["カプラソリン",2],["カプラグラリス",2],["カプラＷ",2],["カプラアルティ",2],["カプラミスティ",2],["カプラライラス",2],["ジョンダ職員",null]]},
+{q:"カプラポイント 20,000pt以上所持",c:"cond",i:[["カプラカプレーゼ",5]]},
+{q:"[衣装] うきうきティルビー 所持",c:"cond",i:[["ティルビー",2]]},
+{q:"[衣装] ドブリス・ミニミー 所持",c:"cond",i:[["ドブリス",2]]},
+{q:"幻想叢書カード 9種類所持",c:"cond",i:[["目次妖精インク",null]]},
+{q:"星帝に転職、もしくは狐の尻尾99個所持",c:"cond",i:[["ギンガ",7],["ニッコウ",7],["ミカ",7]]},
+{q:"ソウルリーパーに転職、もしくは狐の尻尾4個所持",c:"cond",i:[["ハンニャ",7]]},
+{q:"ジュノーで『ヴァルキリーの贈り物』召喚儀式中",c:"cond",i:[["ウィッシュメイデン",2]]},
+{q:"？？？（開催時点で非公開）",c:"unknown",i:[["？？？ ×13体前後",10]]}
+];
+DATA.forEach((d,n)=>{d.id="q"+n});
+
+const KEY="ro-coordinate-2026-progress";
+let done={};
+let db=null;
+
+function loadLocal(){try{done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){done={}}}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+
+const $=s=>document.querySelector(s);
+const list=$("#list"), search=$("#search"), cats=$("#cats"), hideDone=$("#hideDone");
+let activeCat="all", onlyTodo=false;
+
+const SORTS={cat:"種別順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
+let sortMode="cat";
+
+function catButtons(){
+  const order=["all","story","md","cond","none","unknown"];
+  cats.innerHTML="";
+  order.forEach(k=>{
+    const b=document.createElement("button");
+    b.type="button";b.className="chip";
+    b.textContent = k==="all" ? "すべて" : CATS[k].replace(" / エピソード","").replace("メモリアルダンジョン","MD").replace("所持・転職などの条件","所持・転職");
+    b.setAttribute("aria-pressed", k===activeCat);
+    b.onclick=()=>{activeCat=k;[...cats.children].forEach(c=>c.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");render()};
+    cats.appendChild(b);
+  });
+  const sorts=$("#sorts");
+  sorts.innerHTML="";
+  Object.keys(SORTS).forEach(k=>{
+    const b=document.createElement("button");
+    b.type="button";b.className="chip";b.textContent=SORTS[k];
+    b.setAttribute("aria-pressed", k===sortMode);
+    b.onclick=()=>{sortMode=k;[...sorts.children].forEach(c=>c.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");render()};
+    sorts.appendChild(b);
+  });
+}
+
+function rankClass(r){ if(r===null) return "rk unk"; if(r>=10) return "rk top"; if(r>=6) return "rk hi"; return "rk"; }
+function eff(d){ return d.s ? d.i.length/d.s*100 : null; }
+
+function makeRow(d,tip){
+  const row=document.createElement("div");
+  row.className="row"+(done[d.id]?" is-done":"")+(tip?" tip":"");
+  const cb=document.createElement("input");
+  cb.type="checkbox";cb.className="tick";cb.checked=!!done[d.id];
+  cb.setAttribute("aria-label",d.q+" をクリア済みにする");
+  cb.onchange=()=>{ if(cb.checked) done[d.id]=1; else delete done[d.id]; persist(); render(); };
+  const body=document.createElement("div");
+  body.className="body";
+
+  const q=document.createElement("p");
+  q.className="q";q.textContent=d.q;
+  const n=document.createElement("span");
+  n.className="n";n.textContent=d.i.length+"体";
+  q.appendChild(n);
+
+  const meta=document.createElement("div");
+  meta.className="meta";
+  const sk=document.createElement("span");
+  if(d.s){
+    sk.className="skip";
+    sk.textContent="スキップ 石片"+d.s+"個";
+    meta.appendChild(sk);
+    const e=document.createElement("span");
+    e.className="eff";
+    e.innerHTML="100個あたり <b>"+eff(d).toFixed(1)+"体</b>";
+    meta.appendChild(e);
+    const h=document.createElement("span");
+    h.className="hard";
+    h.innerHTML='<span class="hardbar"><i style="width:'+d.s+'%"></i></span>大変さ '+d.s;
+    meta.appendChild(h);
+    if(d.sn){
+      const nt=document.createElement("span");
+      nt.className="hard";nt.textContent="※"+d.sn;
+      meta.appendChild(nt);
+    }
+  }else{
+    sk.className="skip no";
+    sk.textContent = (d.c==="cond"||d.c==="none"||d.c==="unknown") ? "スキップ対象外" : (d.c==="md" ? "MDはスキップ不可" : "スキップ不可（手動クリア）");
+    meta.appendChild(sk);
+  }
+
+  const idols=document.createElement("div");
+  idols.className="idols";
+  d.i.forEach(([name,rk])=>{
+    const el=document.createElement("span");
+    el.className="idol";
+    const b=document.createElement("span");
+    b.className=rankClass(rk);
+    b.textContent=rk===null?"?":"R"+rk;
+    el.appendChild(b);
+    el.appendChild(document.createTextNode(name));
+    idols.appendChild(el);
+  });
+
+  body.appendChild(q);body.appendChild(meta);body.appendChild(idols);
+  row.appendChild(cb);row.appendChild(body);
+  return row;
+}
+
+function visible(){
+  const term=search.value.trim().toLowerCase();
+  return DATA.filter(d=>{
+    if(activeCat!=="all" && d.c!==activeCat) return false;
+    if(onlyTodo && done[d.id]) return false;
+    if(term){
+      const hay=(d.q+" "+d.i.map(x=>x[0]).join(" ")).toLowerCase();
+      if(!hay.includes(term)) return false;
+    }
+    return true;
+  });
+}
+
+function render(){
+  const items=visible();
+  list.innerHTML="";
+  if(!items.length){
+    const e=document.createElement("div");
+    e.className="empty";e.textContent="条件に合うものが見つかりませんでした。";
+    list.appendChild(e);
+    stats();return;
+  }
+
+  if(sortMode==="cat"){
+    const groups={};
+    items.forEach(d=>{(groups[d.c]=groups[d.c]||[]).push(d)});
+    ["story","md","cond","none","unknown"].forEach(k=>{
+      if(!groups[k]) return;
+      const head=document.createElement("div");
+      head.className="group-head";
+      head.innerHTML='<h2></h2><span class="rule"></span><span class="count"></span>';
+      head.querySelector("h2").textContent=CATS[k];
+      head.querySelector(".count").textContent=groups[k].length+" 条件 / "+groups[k].reduce((s,d)=>s+d.i.length,0)+" 体";
+      list.appendChild(head);
+      const rows=document.createElement("div");rows.className="rows";
+      groups[k].forEach(d=>rows.appendChild(makeRow(d,false)));
+      list.appendChild(rows);
+    });
+  }else{
+    const sorted=items.slice();
+    if(sortMode==="skip") sorted.sort((a,b)=>(a.s||9999)-(b.s||9999)||b.i.length-a.i.length);
+    if(sortMode==="eff")  sorted.sort((a,b)=>(eff(b)||-1)-(eff(a)||-1));
+    if(sortMode==="idols")sorted.sort((a,b)=>b.i.length-a.i.length);
+    const head=document.createElement("div");
+    head.className="group-head";
+    head.innerHTML='<h2></h2><span class="rule"></span><span class="count"></span>';
+    head.querySelector("h2").textContent=SORTS[sortMode];
+    head.querySelector(".count").textContent=sorted.length+" 条件 / "+sorted.reduce((s,d)=>s+d.i.length,0)+" 体";
+    list.appendChild(head);
+    const rows=document.createElement("div");rows.className="rows";
+    sorted.forEach((d,idx)=>rows.appendChild(makeRow(d, sortMode==="eff" && idx<3 && d.s)));
+    list.appendChild(rows);
+  }
+  stats();
+}
+
+function costTable(){
+  const el=$("#cost");
+  if(!el) return;
+  const rows=DATA.filter(d=>d.s).sort((a,b)=>eff(b)-eff(a)).slice(0,8);
+  el.innerHTML="";
+  rows.forEach(d=>{
+    const li=document.createElement("li");
+    const a=document.createElement("span");a.className="qn";a.textContent=d.q.replace(/「|」クリア|クリア/g,"");
+    const b=document.createElement("span");b.className="c";b.textContent="石片"+d.s+" / "+d.i.length+"体";
+    const c=document.createElement("span");c.className="v";c.textContent=eff(d).toFixed(1);
+    li.appendChild(a);li.appendChild(b);li.appendChild(c);
+    el.appendChild(li);
+  });
+}
+
+function stats(){
+  const total=DATA.length;
+  const d=DATA.filter(x=>done[x.id]);
+  const idols=d.reduce((s,x)=>s+x.i.length,0);
+  $("#pdone").textContent=d.length;
+  $("#ptotal").textContent=total;
+  $("#pidol").textContent=idols;
+  $("#pbar").style.width=(total?Math.round(d.length/total*100):0)+"%";
+}
+
+function persist(){
+  saveLocal();
+  
+}
+
+search.addEventListener("input",render);
+hideDone.addEventListener("click",()=>{
+  onlyTodo=!onlyTodo;
+  hideDone.setAttribute("aria-pressed",onlyTodo);
+  render();
+});
+
+loadLocal();
+catButtons();
+costTable();
+render();
+
+
+</script>
+
+</body>
+</html>
