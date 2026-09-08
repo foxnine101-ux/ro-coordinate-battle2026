@@ -206,6 +206,12 @@ h1 .star{color:var(--accent-2)}
 
 .chip.reset{border-style:dashed;color:var(--muted)}
 .chip.reset:hover{border-style:solid;border-color:var(--accent-2);color:var(--accent)}
+.databtns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.codearea{width:100%;min-height:76px;resize:vertical;margin:8px 0;background:var(--surface-2);border:1px solid var(--line-strong);border-radius:12px;padding:10px 12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--ink);word-break:break-all}
+.codearea:focus-visible{outline:2px solid var(--accent-2);outline-offset:1px}
+.datamsg{min-height:1.6em}
+.datamsg.ok{color:var(--done);font-weight:700}
+.datamsg.ng{color:#B4545A;font-weight:700}
 .qinfo{margin-top:2px}
 .qinfo>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-2);border-radius:999px;padding:2px 12px;width:max-content}
 .qinfo>summary::-webkit-details-marker{display:none}
@@ -320,6 +326,27 @@ footer a{color:var(--accent)}
       <h3>石片のコスパ上位</h3>
       <ol class="rank-list" id="cost"></ol>
       <p class="progress-note" style="margin-top:10px">「100個あたり何体解放できるか」で並べたもの。石片は<b>コーデキャプター(5,000pt)で3個</b>手に入るので、石片1個 ≒ 約1,667pt が実質レート。イベント内で全部スキップすると約1,000個＝166万pt必要で現実的ではないため、上位だけ狙うのが正解。</p>
+    </div>
+
+    <div class="panel">
+      <h3>進捗の保存・引き継ぎ</h3>
+      <p class="progress-note" style="margin-bottom:12px">チェックはこの端末のブラウザ内に保存されます。キャッシュ削除では消えませんが、<b>サイトデータの削除・シークレットウィンドウ・別の端末</b>では引き継がれません。大事な進捗はバックアップを取っておくと安心です。</p>
+      <div class="databtns">
+        <button class="chip" id="expFile" type="button">バックアップを保存</button>
+        <button class="chip" id="impFile" type="button">バックアップを読み込む</button>
+        <button class="chip" id="showCode" type="button">引き継ぎコード</button>
+        <button class="chip" id="persistBtn" type="button">消えにくくする</button>
+      </div>
+      <input type="file" id="impInput" accept="application/json,.json" hidden>
+      <div id="codeBox" hidden>
+        <textarea class="codearea" id="codeArea" spellcheck="false" placeholder="引き継ぎコードがここに出ます。別の端末ではここに貼り付けて「復元する」を押してください。"></textarea>
+        <div class="databtns">
+          <button class="chip" id="copyCode" type="button">コピー</button>
+          <button class="chip" id="applyCode" type="button">復元する</button>
+          <button class="chip" id="closeCode" type="button">閉じる</button>
+        </div>
+      </div>
+      <p class="progress-note datamsg" id="dataMsg"></p>
     </div>
 
     <div class="panel">
@@ -628,6 +655,93 @@ function costTable(){
   });
 }
 
+function encodeProgress(){
+  const parts=[];
+  DATA.forEach(function(d,i){
+    let bits=0;
+    d.i.forEach(function(_,j){ if(done[idolKey(d,j)]) bits|=(1<<j); });
+    if(bits) parts.push(i.toString(36)+"-"+bits.toString(36));
+  });
+  return "RO1."+parts.join(".");
+}
+function decodeProgress(code){
+  const s=String(code||"").trim().replace(/\s+/g,"");
+  if(s.indexOf("RO1.")!==0) return null;
+  const out={}; let any=false;
+  s.slice(4).split(".").filter(Boolean).forEach(function(seg){
+    const m=seg.split("-"); if(m.length!==2) return;
+    const i=parseInt(m[0],36), bits=parseInt(m[1],36);
+    const d=DATA[i]; if(!d||isNaN(bits)) return;
+    d.i.forEach(function(_,j){ if(bits & (1<<j)){ out[idolKey(d,j)]=1; any=true; } });
+  });
+  return any?out:{};
+}
+function dataMsg(text,kind){
+  const el=$("#dataMsg"); if(!el) return;
+  el.textContent=text; el.className="progress-note datamsg"+(kind?" "+kind:"");
+  if(text){ clearTimeout(dataMsg._t); dataMsg._t=setTimeout(function(){ el.textContent=""; el.className="progress-note datamsg"; },6000); }
+}
+function countDone(o){ return Object.keys(o||{}).length; }
+function exportFile(){
+  const payload={app:"ro-coordinate-battle2026",v:2,savedAt:new Date().toISOString(),code:encodeProgress(),done:done};
+  try{
+    const blob=new Blob([JSON.stringify(payload,null,1)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    const d=new Date(), pad=function(n){return String(n).padStart(2,"0")};
+    a.href=url; a.download="コーデバトル進捗_"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url)},1000);
+    dataMsg("バックアップを保存しました（"+countDone(done)+"体分）","ok");
+  }catch(e){ dataMsg("保存できませんでした。引き継ぎコードをお使いください。","ng"); }
+}
+function applyLoaded(obj,label){
+  if(!obj){ dataMsg("読み込めませんでした。形式が違うようです。","ng"); return; }
+  done=obj; saveLocal(); render();
+  dataMsg(label+"（"+countDone(done)+"体分）","ok");
+}
+function importFile(file){
+  const fr=new FileReader();
+  fr.onload=function(){
+    try{
+      const j=JSON.parse(String(fr.result));
+      if(j && j.done && typeof j.done==="object") applyLoaded(j.done,"バックアップを読み込みました");
+      else if(j && j.code) applyLoaded(decodeProgress(j.code),"バックアップを読み込みました");
+      else dataMsg("このファイルには進捗データが入っていないようです。","ng");
+    }catch(e){ dataMsg("ファイルを読み取れませんでした。","ng"); }
+  };
+  fr.onerror=function(){ dataMsg("ファイルを読み取れませんでした。","ng"); };
+  fr.readAsText(file);
+}
+async function askPersist(){
+  try{
+    if(!navigator.storage||!navigator.storage.persist){ dataMsg("このブラウザは対応していません。バックアップ保存をお使いください。","ng"); return; }
+    if(await navigator.storage.persisted()){ dataMsg("すでに保護されています。","ok"); return; }
+    const ok=await navigator.storage.persist();
+    dataMsg(ok?"保護しました。自動削除されにくくなります。":"ブラウザに断られました。バックアップ保存をお使いください。", ok?"ok":"ng");
+  }catch(e){ dataMsg("設定できませんでした。バックアップ保存をお使いください。","ng"); }
+}
+function initDataPanel(){
+  const ef=$("#expFile"), imf=$("#impFile"), inp=$("#impInput"),
+        sc=$("#showCode"), box=$("#codeBox"), area=$("#codeArea"),
+        cc=$("#copyCode"), ac=$("#applyCode"), xc=$("#closeCode"), pb=$("#persistBtn");
+  if(!ef) return;
+  ef.addEventListener("click",exportFile);
+  imf.addEventListener("click",function(){ inp.click(); });
+  inp.addEventListener("change",function(){ if(inp.files&&inp.files[0]) importFile(inp.files[0]); inp.value=""; });
+  sc.addEventListener("click",function(){
+    box.hidden=!box.hidden;
+    if(!box.hidden){ area.value=encodeProgress(); area.focus(); area.select(); }
+  });
+  cc.addEventListener("click",async function(){
+    area.value=encodeProgress();
+    try{ await navigator.clipboard.writeText(area.value); dataMsg("コピーしました。メモ帳などに控えておくと安心です。","ok"); }
+    catch(e){ area.select(); dataMsg("コピーできませんでした。上の文字を手動でコピーしてください。","ng"); }
+  });
+  ac.addEventListener("click",function(){ applyLoaded(decodeProgress(area.value),"コードから復元しました"); });
+  xc.addEventListener("click",function(){ box.hidden=true; });
+  pb.addEventListener("click",askPersist);
+}
 function isDefaultView(){return sortMode==="cat"&&activeCat==="all"&&!onlyTodo&&!search.value.trim();}
 function updateReset(){const b=$("#reset"); if(b) b.hidden=isDefaultView();}
 function resetView(){sortMode="cat";activeCat="all";onlyTodo=false;search.value="";hideDone.setAttribute("aria-pressed","false");catButtons();render();search.focus();}
@@ -656,6 +770,7 @@ hideDone.addEventListener("click",()=>{
 });
 
 loadLocal();
+initDataPanel();
 catButtons();
 costTable();
 render();
