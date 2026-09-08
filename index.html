@@ -194,6 +194,8 @@ h1 .star{color:var(--accent-2)}
 .rank-list .c{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12.5px}
 .rank-list .v{font-family:"Mochiy Pop One",sans-serif;color:var(--accent);font-variant-numeric:tabular-nums;font-size:13px}
 
+.chip.reset{border-style:dashed;color:var(--muted)}
+.chip.reset:hover{border-style:solid;border-color:var(--accent-2);color:var(--accent)}
 .qinfo{margin-top:2px}
 .qinfo>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-2);border-radius:999px;padding:2px 12px;width:max-content}
 .qinfo>summary::-webkit-details-marker{display:none}
@@ -259,6 +261,7 @@ footer a{color:var(--accent)}
       <button class="chip" id="hideDone" aria-pressed="false" type="button">未クリアのみ</button>
     </div>
     <div class="chips" id="sorts" role="group" aria-label="並び替え"></div>
+<div class="chips"><button class="chip reset" id="reset" type="button" hidden>&#8634; 表示をリセット</button></div>
   </div>
 
   <div id="list"></div>
@@ -605,6 +608,9 @@ function costTable(){
   });
 }
 
+function isDefaultView(){return sortMode==="cat"&&activeCat==="all"&&!onlyTodo&&!search.value.trim();}
+function updateReset(){const b=$("#reset"); if(b) b.hidden=isDefaultView();}
+function resetView(){sortMode="cat";activeCat="all";onlyTodo=false;search.value="";hideDone.setAttribute("aria-pressed","false");catButtons();render();search.focus();}
 function stats(){
   const total=DATA.length;
   const d=DATA.filter(x=>done[x.id]);
@@ -613,6 +619,7 @@ function stats(){
   $("#ptotal").textContent=total;
   $("#pidol").textContent=idols;
   $("#pbar").style.width=(total?Math.round(d.length/total*100):0)+"%";
+  updateReset();
 }
 
 function persist(){
@@ -621,6 +628,7 @@ function persist(){
 }
 
 search.addEventListener("input",render);
+const resetBtn=$("#reset"); if(resetBtn) resetBtn.addEventListener("click",resetView);
 hideDone.addEventListener("click",()=>{
   onlyTodo=!onlyTodo;
   hideDone.setAttribute("aria-pressed",onlyTodo);
