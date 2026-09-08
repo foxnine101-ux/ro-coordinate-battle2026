@@ -150,6 +150,8 @@ h1 .star{color:var(--accent-2)}
   border:1.5px solid var(--line-strong);background:var(--surface);cursor:pointer;flex:none;
 }
 .tick:checked{background:var(--done);border-color:var(--done)}
+.tick:indeterminate{background:var(--done-soft);border-color:var(--done)}
+.tick:indeterminate::after{content:"";display:block;width:9px;height:2px;background:var(--done);margin:7px auto 0;border-radius:2px}
 .tick:checked::after{content:"";display:block;width:5px;height:9px;margin:2px auto 0;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
 .tick:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
 .body{display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -158,8 +160,16 @@ h1 .star{color:var(--accent-2)}
 .idols{display:flex;flex-wrap:wrap;gap:5px}
 .idol{
   display:inline-flex;align-items:center;gap:5px;
-  background:var(--surface-2);border-radius:999px;padding:2px 11px 2px 3px;font-size:12.5px;color:var(--ink-2);
+  background:var(--surface-2);border:1px solid transparent;border-radius:999px;
+  padding:2px 11px 2px 3px;font:inherit;font-size:12.5px;color:var(--ink-2);
+  cursor:pointer;text-align:left;
 }
+.idol:hover{border-color:var(--line-strong)}
+.idol:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.idol.on{background:var(--done-soft);border-color:#CFE4D6;color:var(--done)}
+.idol.on .nm{text-decoration:line-through;text-decoration-color:#A8C9B5}
+.idol.on::after{content:"\2713";font-size:11px;font-weight:700;color:var(--done);margin-left:1px}
+.idol.on .rk{background:#DCEDE2;color:var(--done)}
 .rk{
   font-size:10px;line-height:1;font-weight:700;
   padding:4px 5px;border-radius:999px;background:#EFE9E1;color:var(--muted);
@@ -247,11 +257,11 @@ footer a{color:var(--accent)}
 
   <section class="progress" aria-label="達成状況">
     <div class="progress-top">
-      <span class="progress-label">クリア済みの条件</span>
-      <span class="progress-num"><span id="pdone">0</span><small> / <span id="ptotal">0</span> 条件</small></span>
+      <span class="progress-label">解放したアイドル</span>
+      <span class="progress-num"><span id="pdone">0</span><small> / <span id="ptotal">0</span> 体</small></span>
     </div>
     <div class="bar"><span id="pbar" style="width:0%"></span></div>
-    <p class="progress-note">解放できるアイドル数：<b id="pidol">0</b> 体 <span class="sync" id="sync"></span></p>
+    <p class="progress-note">クリア済みの条件：<b id="pidol">0</b> / <span id="pcondtotal">0</span> <span class="sync" id="sync"></span></p>
   </section>
 
   <div class="controls">
@@ -414,8 +424,11 @@ const KEY="ro-coordinate-2026-progress";
 let done={};
 let db=null;
 
-function loadLocal(){try{done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){done={}}}
-function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+function idolKey(d,i){return d.id+":"+i}
+function rowState(d){let n=0;for(let i=0;i<d.i.length;i++) if(done[idolKey(d,i)]) n++;return {n:n,total:d.i.length,all:n>0&&n===d.i.length,some:n>0};}
+function setRow(d,on){d.i.forEach(function(_,i){const k=idolKey(d,i); if(on) done[k]=1; else delete done[k];});}
+function loadLocal(){try{const raw=JSON.parse(localStorage.getItem(KEY)||"{}")||{};if(raw&&raw.v===2){done=raw.d||{};return;}done={};DATA.forEach(function(d){if(raw[d.id]) d.i.forEach(function(_,i){done[idolKey(d,i)]=1;});});}catch(e){done={};}}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify({v:2,d:done}))}catch(e){}}
 
 const $=s=>document.querySelector(s);
 const list=$("#list"), search=$("#search"), cats=$("#cats"), hideDone=$("#hideDone");
@@ -477,19 +490,20 @@ a.textContent="ROクエスト案内所で手順を見る \u2192"; lk.appendChild
 det.appendChild(box); return det;
 }
 function makeRow(d,tip){
+  const st=rowState(d);
   const row=document.createElement("div");
-  row.className="row"+(done[d.id]?" is-done":"")+(tip?" tip":"");
+  row.className="row"+(st.all?" is-done":"")+(tip?" tip":"");
   const cb=document.createElement("input");
-  cb.type="checkbox";cb.className="tick";cb.checked=!!done[d.id];
-  cb.setAttribute("aria-label",d.q+" をクリア済みにする");
-  cb.onchange=()=>{ if(cb.checked) done[d.id]=1; else delete done[d.id]; persist(); render(); };
+  cb.type="checkbox";cb.className="tick";cb.checked=st.all;cb.indeterminate=st.some&&!st.all;
+  cb.setAttribute("aria-label",d.q+" のアイドルをまとめてチェック");
+  cb.onchange=()=>{ setRow(d,cb.checked); persist(); render(); };
   const body=document.createElement("div");
   body.className="body";
 
   const q=document.createElement("p");
   q.className="q";q.textContent=d.q;
   const n=document.createElement("span");
-  n.className="n";n.textContent=d.i.length+"体";
+  n.className="n";n.textContent=st.n+" / "+st.total+"体";
   q.appendChild(n);
 
   const meta=document.createElement("div");
@@ -520,14 +534,20 @@ function makeRow(d,tip){
 
   const idols=document.createElement("div");
   idols.className="idols";
-  d.i.forEach(([name,rk])=>{
-    const el=document.createElement("span");
-    el.className="idol";
+  d.i.forEach(([name,rk],idx)=>{
+    const k=idolKey(d,idx), on=!!done[k];
+    const el=document.createElement("button");
+    el.type="button";
+    el.className="idol"+(on?" on":"");
+    el.setAttribute("aria-pressed",on);
+    el.title=on?name+" を未解放に戻す":name+" を解放済みにする";
     const b=document.createElement("span");
     b.className=rankClass(rk);
     b.textContent=rk===null?"?":"R"+rk;
-    el.appendChild(b);
-    el.appendChild(document.createTextNode(name));
+    const nm=document.createElement("span");
+    nm.className="nm";nm.textContent=name;
+    el.appendChild(b);el.appendChild(nm);
+    el.onclick=()=>{ if(done[k]) delete done[k]; else done[k]=1; persist(); render(); };
     idols.appendChild(el);
   });
 
@@ -541,7 +561,7 @@ function visible(){
   const term=search.value.trim().toLowerCase();
   return DATA.filter(d=>{
     if(activeCat!=="all" && d.c!==activeCat) return false;
-    if(onlyTodo && done[d.id]) return false;
+    if(onlyTodo && rowState(d).all) return false;
     if(term){
       const hay=(d.q+" "+d.i.map(x=>x[0]).join(" ")).toLowerCase();
       if(!hay.includes(term)) return false;
@@ -612,13 +632,13 @@ function isDefaultView(){return sortMode==="cat"&&activeCat==="all"&&!onlyTodo&&
 function updateReset(){const b=$("#reset"); if(b) b.hidden=isDefaultView();}
 function resetView(){sortMode="cat";activeCat="all";onlyTodo=false;search.value="";hideDone.setAttribute("aria-pressed","false");catButtons();render();search.focus();}
 function stats(){
-  const total=DATA.length;
-  const d=DATA.filter(x=>done[x.id]);
-  const idols=d.reduce((s,x)=>s+x.i.length,0);
-  $("#pdone").textContent=d.length;
-  $("#ptotal").textContent=total;
-  $("#pidol").textContent=idols;
-  $("#pbar").style.width=(total?Math.round(d.length/total*100):0)+"%";
+  let doneIdols=0,totalIdols=0,doneConds=0;
+  DATA.forEach(function(x){const st=rowState(x);doneIdols+=st.n;totalIdols+=st.total;if(st.all) doneConds++;});
+  $("#pdone").textContent=doneIdols;
+  $("#ptotal").textContent=totalIdols;
+  $("#pidol").textContent=doneConds;
+  const pt=$("#pcondtotal"); if(pt) pt.textContent=DATA.length;
+  $("#pbar").style.width=(totalIdols?Math.round(doneIdols/totalIdols*100):0)+"%";
   updateReset();
 }
 
