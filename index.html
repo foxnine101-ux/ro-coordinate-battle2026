@@ -194,6 +194,20 @@ h1 .star{color:var(--accent-2)}
 .rank-list .c{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12.5px}
 .rank-list .v{font-family:"Mochiy Pop One",sans-serif;color:var(--accent);font-variant-numeric:tabular-nums;font-size:13px}
 
+.qinfo{margin-top:2px}
+.qinfo>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-2);border-radius:999px;padding:2px 12px;width:max-content}
+.qinfo>summary::-webkit-details-marker{display:none}
+.qinfo>summary::before{content:"\25B8";font-size:10px;transition:transform .15s ease}
+.qinfo[open]>summary::before{transform:rotate(90deg)}
+.qinfo>summary:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.qbox{margin-top:8px;background:var(--surface-2);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.qrow{display:grid;grid-template-columns:6.6em 1fr;gap:10px;font-size:12.5px;line-height:1.65}
+.qrow dt{color:var(--muted);font-weight:700;margin:0;white-space:nowrap}
+.qrow dd{margin:0;color:var(--ink-2);word-break:break-word}
+.qrow dd.item{color:var(--ink)}
+.qlink{font-size:12px;margin-top:4px}
+.qlink a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-2)}
+.qlink a:hover{border-bottom-color:var(--accent)}
 .empty{color:var(--muted);font-size:13.5px;padding:24px;text-align:center;border:1px dashed var(--line-strong);border-radius:14px}
 
 /* ---- reference panels ---- */
@@ -310,7 +324,8 @@ footer a{color:var(--accent)}
   <footer>
     <p style="margin:0 0 10px">当ページは個人が趣味の範囲で作成した<b>非公式のファンページ</b>です。運営元とは一切関係ありません。<br>
     スキップ可否と必要石片数は公式「クエスト」ガイドのクエストスキップ表、アイドル情報は「マジカル☆コーデバトル」特設ページより。公式の図鑑表を条件ごとに再編したものです。<br>
-    ランク10のアイドルは開催時点で非公開（？？？）。一部アイドルはランク表記が確認できなかったため「R?」としています。数値は必ず<a href="https://ragnarokonline.gungho.jp/special/coordinate-battle2026/" target="_blank" rel="noopener">公式ページ</a>で最終確認してください。</p>
+    各クエストの条件・場所・必要アイテムと手順リンクは、有志wiki「<a href="https://roquest.work/" target="_blank" rel="noopener">ROクエスト案内所</a>」を参照させていただきました。詳しい手順は同サイトをご覧ください。<br>
+ランク10のアイドルは開催時点で非公開（？？？）。一部アイドルはランク表記が確認できなかったため「R?」としています。数値は必ず<a href="https://ragnarokonline.gungho.jp/special/coordinate-battle2026/" target="_blank" rel="noopener">公式ページ</a>で最終確認してください。</p>
     <p style="margin:0">
       &copy; Gravity Co., Ltd. &amp; Lee MyoungJin(studio DTDS). All rights reserved.<br>
       &copy; GungHo Online Entertainment, Inc. All Rights Reserved.<br>
@@ -321,6 +336,7 @@ footer a{color:var(--accent)}
 
 <script>
 const CATS={story:"クエスト / エピソード",md:"メモリアルダンジョン",cond:"所持・転職などの条件",none:"条件なし",unknown:"未公開"};
+const WIKI={"「七王家とユミルの心臓」クリア":{"u":"Prontera#content_1_19","c":"「異世界」完了、BaseLv100以上","p":"以下の街にいる何れかの [王室急使]","it":"なし"},"「ウィグナー家の心の箱」クリア":{"u":"Prontera#content_1_20","c":"「七王家とユミルの心臓」を一定以上進行","p":"プロンテラ離宮東側(ウィグナー家執務室)(82,21)にいる [ルヴィエル・ウィグナー]","it":"カビの粉 / 聖水 / オレンジ / アルコール / きれいな砂 / レモン / ハーブの味つきカルビ / しおれないバラ / 海涙石 各1個"},"「ウィグナー家の心の箱(おまけ)」クリア":{"u":"Prontera#content_1_21","c":"「ウィグナー家の心の箱」完了","p":"プロンテラ離宮東側(ウィグナー家執務室)(95,9)にいる [ユルゲン・ウィグナー]","it":"しおれないバラ 1個 / 海涙石 1個"},"「レベンブルグ家の絆」クリア":{"u":"Prontera#content_1_22","c":"「七王家とユミルの心臓」を一定以上進行","p":"プロンテラ離宮東側(レベンブルグ家執務室)(90,186)にいる [マクシーミリアン]","it":"なし"},"「エルンスト王子とゲオルグ家」クリア":{"u":"Prontera#content_1_23","c":"「七王家とユミルの心臓」を一定以上進行","p":"プロンテラ離宮東側(81,131)にあるゲオルグ家執務室","it":"なし"},"「テラグローリア」クリア":{"u":"Prontera#content_1_26","c":"「七王家とユミルの心臓」完了","p":"プロンテラ離宮西側(貴賓室)(21,39)にいる [ニーヒル・ハイネン]","it":"古いつるはし 3個"},"「料理作成」クリア":{"u":"Prontera#content_1_9","c":"コック帽を装備していること（BaseLv50以上）","p":"プロンテラ城内調理場(43,30)にいる [シャルル=オルレアン]","it":"コック帽 1個 / レベル1料理6種の材料"},"「冒険者達との出会い」クリア":{"u":"Eclage#content_1_3","c":"なし","p":"花が咲き始めた大地(94,322)or(100,323)にいる [警備兵]","it":"なし"},"「夢見る作家」クリア":{"u":"Eclage#content_1_4","c":"BaseLv99以上 /「冒険者達との出会い」完了","p":"エクラージュ(102,32)にいる [妖精大工]","it":"ほこりの塊 8個、大量のどんぐり 1個"},"「エクラージュの王」クリア":{"u":"Eclage#content_1_14","c":"BaseLv99以上 /「知恵の王の指輪」完了","p":"エクラージュ 内部01(32,52)にいる [ポメ] 他","it":"ヒルスリオンの角・魔力の角・馬のひづめ 各5個 / ほこりの塊 20個 / 落ち葉のしおり 20個 / ピンギキュラの果実ジャム 3個 / ルシオラヴェスパの蜂蜜 3個"},"「悠久なる絆」クリア":{"u":"Eclage#content_1_15","c":"「エクラージュの王」でカルデュイと謁見済","p":"ホームツリー内の王宮(41,90)にいる [カルデュイ]","it":"ブドウ果汁入りハーブティー 1個 / マラン島特産缶詰10個・まかじき2個・魚のはしくれ10個 の何れか / 闇の破片 1個 / レッド・イエロー・ブルージェムストーン 各2個"},"「レッケンベル社の噂」クリア":{"u":"Lighthalzen#content_1_8","c":"BaseLv95(転生90)以上 /「生体工学研究所進入」「レゲンシュルム研究所」完了","p":"リヒタルゼン(303,303)にいる [ジロルラ]","it":"なし"},"「通行証クエスト」クリア":{"u":"Lighthalzen#content_1_3","c":"BaseLv50以上","p":"リヒタルゼン3時方向にいる貧民街への移動イベントNPC [治安維持員]","it":"なし"},"「宝石クエスト」クリア":{"u":"Rachel#content_1_4","c":"BaseLv60以上(手順13以降) /「献金」手順11以上完了","p":"ラヘル(103,240)の建物内2F(384,246)にいる [ビンセント]","it":"なし"},"「献金クエスト」クリア":{"u":"Rachel#content_1_5","c":"なし","p":"フレイヤ大神殿(116,174)にいる [ネマ]","it":"花火 20個"},"「聖域の秘密」クリア":{"u":"Rachel#content_1_6","c":"「宝石クエスト」「献金」完了","p":"フレイヤ大神殿1F(277,159)にいる [ジェド大神官]","it":"氷の心臓 40個"},"「祈りの方向」クリア":{"u":"ba_maison#content_1_10","c":"4次職 /「突然の来訪者」「献金」完了","p":"バルムント邸 庭園(33,225)の室内(26,266)にいる [スマートエリー]","it":"なし"},"「イルシオン」クリア":{"u":"Einbroch#content_1_9","c":"BaseLv150以上 /「テラグローリア」完了","p":"アインベフ(219,80)にいる [リベリオン隊員]","it":"なし"},"「呪われた人魚」クリア":{"u":"Izlude#content_1_5","c":"BaseLv100以上 /「海底神殿調査団」完了","p":"イズルード(202,171)[協会会員]→建物内(171,164)[ビュート教授]","it":"ヨルムンガンドの花 1個 / ヒナレ 1個 / 歌う草 5個 / 幻想の花 1個 / 氷バラ 2個"},"「セドラを愛する者」クリア":{"u":"Izlude#content_1_6","c":"なし","p":"イズルード(202,171)[協会会員]→建物内(171,168)[アーチ調査団員]","it":"ハット[1] 1個 / べとべとする液体 800個 / 触手 200個 / 乳白色の布 5個 / 大きなボタン 10個"},"「猫達の定期集会」クリア":{"u":"Malangdo#content_1_3","c":"BaseLv60以上","p":"マラン島(162,163)の船内(22,62)にいる [トーマス]","it":"おいしいゼリー 30個"},"「マラン島ニャドベンチャー」クリア":{"u":"Malangdo#content_1_7","c":"BaseLv40以上","p":"マラン島(165,223)にいる [ラト]","it":"—"},"「大神官」クエスト":{"u":"Morocc#content_1_7","c":"「トール火山基地進入」完了","p":"モロク - ピラミッド周辺(77,167)にいる [異国の商人]","it":"サードオニキス 1個"},"「フレイムヴァレーへの道」クリア":{"u":"Morocc#content_1_10","c":"BaseLv140以上","p":"モロク(138,238)にいる [倒れている男性]","it":"化け物のエサ 1個 / フレイムバグの皮 1個 / ソニアの茎 1個"},"「地下遺跡アドベンチャー」クリア":{"u":"Yuno#content_1_10","c":"3次職、影狼、朧、リベリオン、スーパーノービス(限界突破)","p":"ジュノーフィールド07(216,157)にいる [案内員エリシャ]","it":"古い鉄板 30個"},"「ロックリッジ」クリア":{"u":"RockRidge"},"「キル・ハイル」クリア":{"u":"KielHyre_quest"},"「ファンタスマゴリカ」クリア":{"u":"verus#content_1_3"},"「The Sign 3部」クリア":{"u":"TheSign"},"「魔神殿」クリア":{"u":"Memorial_dun/End_of_morocc"}};
 const DATA=[
 {q:"条件なし",c:"none",i:[["ホルグレン",1],["式",1],["プレミィ",1]]},
 {q:"「マラン島ニャドベンチャー」クリア",c:"story",i:[["ホムニャ&ニャンスン",1]]},
@@ -430,6 +446,33 @@ function catButtons(){
 function rankClass(r){ if(r===null) return "rk unk"; if(r>=10) return "rk top"; if(r>=6) return "rk hi"; return "rk"; }
 function eff(d){ return d.s ? d.i.length/d.s*100 : null; }
 
+function questInfo(d){
+if(d.c==="cond"||d.c==="none"||d.c==="unknown") return null;
+const w=WIKI[d.q];
+const core=d.q.replace(/[「」]/g,"").replace(/クリア$/,"").replace(/^MD/,"").trim();
+const url = w&&w.u ? "https://roquest.work/?"+w.u : "https://roquest.work/?cmd=search2&q="+encodeURIComponent(core);
+const det=document.createElement("details"); det.className="qinfo";
+const sum=document.createElement("summary");
+sum.textContent = w&&w.c ? "クエスト情報" : "案内所で調べる";
+det.appendChild(sum);
+const box=document.createElement("div"); box.className="qbox";
+if(w&&w.c){
+[["条件",w.c,""],["場所",w.p,""],["必要アイテム",w.it,"item"]].forEach(function(a){
+ if(!a[1]) return;
+ const dl=document.createElement("dl"); dl.className="qrow";
+ const dt=document.createElement("dt"); dt.textContent=a[0];
+ const dd=document.createElement("dd"); dd.textContent=a[1]; if(a[2]) dd.className=a[2];
+ dl.appendChild(dt); dl.appendChild(dd); box.appendChild(dl);
+});
+}else{
+const pn=document.createElement("div"); pn.className="qrow"; pn.style.gridTemplateColumns="1fr";
+pn.textContent="このクエストの詳細はROクエスト案内所で確認できます。"; box.appendChild(pn);
+}
+const lk=document.createElement("div"); lk.className="qlink";
+const a=document.createElement("a"); a.href=url; a.target="_blank"; a.rel="noopener";
+a.textContent="ROクエスト案内所で手順を見る \u2192"; lk.appendChild(a); box.appendChild(lk);
+det.appendChild(box); return det;
+}
 function makeRow(d,tip){
   const row=document.createElement("div");
   row.className="row"+(done[d.id]?" is-done":"")+(tip?" tip":"");
@@ -486,6 +529,7 @@ function makeRow(d,tip){
   });
 
   body.appendChild(q);body.appendChild(meta);body.appendChild(idols);
+const __i=questInfo(d); if(__i) body.appendChild(__i);
   row.appendChild(cb);row.appendChild(body);
   return row;
 }
