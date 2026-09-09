@@ -187,6 +187,7 @@ h1 .star{color:var(--accent-2)}
   font-variant-numeric:tabular-nums;
 }
 .skip.no{background:transparent;border:1px dashed var(--line-strong);color:var(--muted);font-weight:400}
+.maxrk{font-size:12px;font-weight:700;border-radius:999px;padding:2px 11px;background:var(--sakura-2);color:var(--accent);font-variant-numeric:tabular-nums}
 .eff{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
 .eff b{color:var(--accent)}
 .hard{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
@@ -461,7 +462,7 @@ const $=s=>document.querySelector(s);
 const list=$("#list"), search=$("#search"), cats=$("#cats"), hideDone=$("#hideDone");
 let activeCat="all", onlyTodo=false;
 
-const SORTS={cat:"種別順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
+const SORTS={cat:"種別順",rank:"ランクが高い順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
 let sortMode="cat";
 
 function catButtons(){
@@ -488,6 +489,13 @@ function catButtons(){
 
 function rankClass(r){ if(r===null) return "rk unk"; if(r>=10) return "rk top"; if(r>=6) return "rk hi"; return "rk"; }
 function eff(d){ return d.s ? d.i.length/d.s*100 : null; }
+function rkVal(r){ return r===null?-1:r; }
+function maxRank(d){ return d.i.reduce(function(m,x){ return Math.max(m,rkVal(x[1])); },-1); }
+function idolOrder(d){
+  const o=d.i.map(function(_,i){return i});
+  if(sortMode==="rank") o.sort(function(a,b){ return rkVal(d.i[b][1])-rkVal(d.i[a][1]); });
+  return o;
+}
 
 function questInfo(d){
 if(d.c==="cond"||d.c==="none"||d.c==="unknown") return null;
@@ -535,6 +543,13 @@ function makeRow(d,tip){
 
   const meta=document.createElement("div");
   meta.className="meta";
+  if(sortMode==="rank"){
+    const mx=maxRank(d);
+    const mr=document.createElement("span");
+    mr.className="maxrk";
+    mr.textContent="最高 "+(mx<0?"R?":"R"+mx);
+    meta.appendChild(mr);
+  }
   const sk=document.createElement("span");
   if(d.s){
     sk.className="skip";
@@ -561,7 +576,8 @@ function makeRow(d,tip){
 
   const idols=document.createElement("div");
   idols.className="idols";
-  d.i.forEach(([name,rk],idx)=>{
+  idolOrder(d).forEach((idx)=>{
+    const name=d.i[idx][0], rk=d.i[idx][1];
     const k=idolKey(d,idx), on=!!done[k];
     const el=document.createElement("button");
     el.type="button";
@@ -627,6 +643,7 @@ function render(){
     if(sortMode==="skip") sorted.sort((a,b)=>(a.s||9999)-(b.s||9999)||b.i.length-a.i.length);
     if(sortMode==="eff")  sorted.sort((a,b)=>(eff(b)||-1)-(eff(a)||-1));
     if(sortMode==="idols")sorted.sort((a,b)=>b.i.length-a.i.length);
+    if(sortMode==="rank") sorted.sort((a,b)=>maxRank(b)-maxRank(a)||b.i.length-a.i.length);
     const head=document.createElement("div");
     head.className="group-head";
     head.innerHTML='<h2></h2><span class="rule"></span><span class="count"></span>';
