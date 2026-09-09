@@ -462,7 +462,7 @@ const $=s=>document.querySelector(s);
 const list=$("#list"), search=$("#search"), cats=$("#cats"), hideDone=$("#hideDone");
 let activeCat="all", onlyTodo=false;
 
-const SORTS={cat:"種別順",rank:"ランクが高い順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
+const SORTS={cat:"種別順",rank:"ランクが高い順",rankAsc:"ランクが低い順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
 let sortMode="cat";
 
 function catButtons(){
@@ -494,6 +494,7 @@ function maxRank(d){ return d.i.reduce(function(m,x){ return Math.max(m,rkVal(x[
 function idolOrder(d){
   const o=d.i.map(function(_,i){return i});
   if(sortMode==="rank") o.sort(function(a,b){ return rkVal(d.i[b][1])-rkVal(d.i[a][1]); });
+  if(sortMode==="rankAsc") o.sort(function(a,b){ const A=rkVal(d.i[a][1]),B=rkVal(d.i[b][1]); return (A<0?99:A)-(B<0?99:B); });
   return o;
 }
 
@@ -543,7 +544,7 @@ function makeRow(d,tip){
 
   const meta=document.createElement("div");
   meta.className="meta";
-  if(sortMode==="rank"){
+  if(sortMode==="rank"||sortMode==="rankAsc"){
     const mx=maxRank(d);
     const mr=document.createElement("span");
     mr.className="maxrk";
@@ -644,6 +645,7 @@ function render(){
     if(sortMode==="eff")  sorted.sort((a,b)=>(eff(b)||-1)-(eff(a)||-1));
     if(sortMode==="idols")sorted.sort((a,b)=>b.i.length-a.i.length);
     if(sortMode==="rank") sorted.sort((a,b)=>maxRank(b)-maxRank(a)||b.i.length-a.i.length);
+    if(sortMode==="rankAsc") sorted.sort((a,b)=>{const A=maxRank(a),B=maxRank(b);return (A<0?99:A)-(B<0?99:B)||b.i.length-a.i.length;});
     const head=document.createElement("div");
     head.className="group-head";
     head.innerHTML='<h2></h2><span class="rule"></span><span class="count"></span>';
