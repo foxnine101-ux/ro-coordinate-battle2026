@@ -166,6 +166,8 @@ h1 .star{color:var(--accent-2)}
 }
 .idol:hover{border-color:var(--line-strong)}
 .idol:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.idol.dim{opacity:.35}
+.rankchip{font-variant-numeric:tabular-nums}
 .idol.on{background:var(--done-soft);border-color:#CFE4D6;color:var(--done)}
 .idol.on .nm{text-decoration:line-through;text-decoration-color:#A8C9B5}
 .idol.on::after{content:"\2713";font-size:11px;font-weight:700;color:var(--done);margin-left:1px}
@@ -288,6 +290,7 @@ footer a{color:var(--accent)}
   <div class="controls">
     <input class="search" id="search" type="search" placeholder="クエスト名・アイドル名で絞り込み" aria-label="検索">
     <div class="chips" id="cats" role="group" aria-label="種別で絞り込み"></div>
+    <div class="chips" id="ranks" role="group" aria-label="ランクで絞り込み"></div>
     <div class="chips">
       <button class="chip" id="hideDone" aria-pressed="false" type="button">未クリアのみ</button>
     </div>
@@ -479,7 +482,7 @@ function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify({v:2,d:done}))}
 
 const $=s=>document.querySelector(s);
 const list=$("#list"), search=$("#search"), cats=$("#cats"), hideDone=$("#hideDone");
-let activeCat="all", onlyTodo=false;
+let activeCat="all", onlyTodo=false, activeRank=0;
 
 const SORTS={cat:"種別順",rank:"ランクが高い順",rankAsc:"ランクが低い順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
 let sortMode="cat";
@@ -503,6 +506,25 @@ function catButtons(){
     b.setAttribute("aria-pressed", k===sortMode);
     b.onclick=()=>{sortMode=k;[...sorts.children].forEach(c=>c.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");render()};
     sorts.appendChild(b);
+  });
+  rankButtons();
+}
+function rankButtons(){
+  const box=$("#ranks"); if(!box) return;
+  box.innerHTML="";
+  const seen=[...new Set(DATA.flatMap(d=>d.i.map(x=>x[1])).filter(v=>v!==null))].sort((a,b)=>a-b);
+  const list=[0].concat(seen);
+  list.forEach(function(v){
+    const b=document.createElement("button");
+    b.type="button"; b.className="chip rankchip"; b.textContent = v===0?"全ランク":("R"+v);
+    b.setAttribute("aria-pressed", v===activeRank);
+    b.onclick=function(){
+      activeRank=v;
+      [...box.children].forEach(c=>c.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed","true");
+      render();
+    };
+    box.appendChild(b);
   });
 }
 
@@ -697,7 +719,7 @@ function makeRow(d,tip){
     const k=idolKey(d,idx), on=!!done[k];
     const el=document.createElement("button");
     el.type="button";
-    el.className="idol"+(on?" on":"");
+    el.className="idol"+(on?" on":"")+((activeRank&&rk!==activeRank)?" dim":"");
     el.setAttribute("aria-pressed",on);
     el.title=on?name+" を未解放に戻す":name+" を解放済みにする";
     const b=document.createElement("span");
@@ -720,6 +742,7 @@ function visible(){
   const term=search.value.trim().toLowerCase();
   return DATA.filter(d=>{
     if(activeCat!=="all" && d.c!==activeCat) return false;
+    if(activeRank && !d.i.some(x=>x[1]===activeRank)) return false;
     if(onlyTodo && rowState(d).all) return false;
     if(term){
       const hay=(d.q+" "+d.i.map(x=>x[0]).join(" ")).toLowerCase();
@@ -748,7 +771,7 @@ function render(){
       head.className="group-head";
       head.innerHTML='<h2></h2><span class="rule"></span><span class="count"></span>';
       head.querySelector("h2").textContent=CATS[k];
-      head.querySelector(".count").textContent=groups[k].length+" 条件 / "+groups[k].reduce((s,d)=>s+d.i.length,0)+" 体";
+      head.querySelector(".count").textContent=groups[k].length+" 条件 / "+(activeRank?groups[k].reduce((s,d)=>s+d.i.filter(x=>x[1]===activeRank).length,0)+" 体(R"+activeRank+")":groups[k].reduce((s,d)=>s+d.i.length,0)+" 体");
       list.appendChild(head);
       const rows=document.createElement("div");rows.className="rows";
       groups[k].forEach(d=>rows.appendChild(makeRow(d,false)));
@@ -876,9 +899,9 @@ function initDataPanel(){
   xc.addEventListener("click",function(){ box.hidden=true; });
   pb.addEventListener("click",askPersist);
 }
-function isDefaultView(){return sortMode==="cat"&&activeCat==="all"&&!onlyTodo&&!search.value.trim();}
+function isDefaultView(){return sortMode==="cat"&&activeCat==="all"&&!onlyTodo&&!activeRank&&!search.value.trim();}
 function updateReset(){const b=$("#reset"); if(b) b.hidden=isDefaultView();}
-function resetView(){sortMode="cat";activeCat="all";onlyTodo=false;search.value="";hideDone.setAttribute("aria-pressed","false");catButtons();render();search.focus();}
+function resetView(){sortMode="cat";activeCat="all";onlyTodo=false;activeRank=0;search.value="";hideDone.setAttribute("aria-pressed","false");catButtons();render();search.focus();}
 function stats(){
   let doneIdols=0,totalIdols=0,doneConds=0;
   DATA.forEach(function(x){const st=rowState(x);doneIdols+=st.n;totalIdols+=st.total;if(st.all) doneConds++;});
