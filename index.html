@@ -375,7 +375,7 @@ footer a{color:var(--accent)}
         <li><b>MDそのものはスキップ不可</b>。ただし前提の「生体工学研究所侵入」(25個)を飛ばせば、生体MD系の7体に一気に手が届く。</li>
         <li>「The Sign 3部」を通しでやるなら1部60＋2部40＋3部20＝<b>120個</b>。</li>
         <li>カプラポイント条件の10体は<b>石片もクエストも不要</b>。最優先。</li>
-        <li><b>/navi</b> ボタンはクリックでコピー→チャット欄に貼り付けで経路案内。書式は <code>/navi マップ名 X/Y</code>。<b>Alt+N</b> でナビゲーションウィンドウ、名前検索も可。</li>
+        <li><b>/navi2</b> ボタンはクリックでコピー→チャット欄に貼り付けで経路案内。書式は <code>/navi2 マップ名 X/Y 1/1/1</code>（末尾はScroll・Zeny・飛行船の使用可否）。<b>Alt+N</b> でナビゲーションウィンドウ、名前検索も可。</li>
         <li>イベント会場の<b>R10が11体</b>。各アイドルの「手紙」を使うと対戦できる（デイリー1,500pt）。</li>
       </ul>
     </div>
@@ -541,7 +541,7 @@ function idolOrder(d){
 
 function naviBtn(map,x,y){
   if(!map||x===null||x===undefined||isNaN(x)) return null;
-  const cmd="/navi "+map+" "+x+"/"+y;
+  const cmd="/navi2 "+map+" "+x+"/"+y+" 1/1/1";
   const b=document.createElement("button");
   b.type="button"; b.className="navi";
   b.textContent=cmd;
@@ -648,7 +648,7 @@ function questInfo(d){
     box.appendChild(h2); box.appendChild(steps);
     const nt=document.createElement("p");
     nt.className="progress-note"; nt.style.marginTop="6px";
-    nt.textContent="/navi はコピーしてチャット欄に貼り付けると経路案内が出ます（Scroll・Zeny・飛行船を使わない経路）。マップが特定できない地点はNPC名をコピーして、ナビゲーションウィンドウ（Alt+N）で検索してください。";
+    nt.textContent="/navi2 はコピーしてチャット欄に貼り付けると経路案内が出ます（末尾の 1/1/1 でScroll・Zeny・飛行船の使用を許可）。マップが特定できない地点はNPC名をコピーして、ナビゲーションウィンドウ（Alt+N）で検索してください。";
     box.appendChild(nt);
   }
   if(isQuest){
