@@ -235,7 +235,7 @@ h1 .star{color:var(--accent-2)}
 .memolabel{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em}
 .memosel{font:inherit;font-size:11.5px;padding:2px 4px;border-radius:7px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink);max-width:8.5em}
 .memosel:focus-visible{outline:2px solid var(--accent-2);outline-offset:1px}
-.memoout{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:11.5px;flex:0 1 auto}
+.memoout{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:11.5px;flex:1 0 100%;width:100%;margin-top:1px;padding-left:2px}
 .memoout.memoempty{color:var(--muted)}
 .memoarrow{font-weight:700;color:var(--accent);font-size:11px}
 .atag{display:inline-block;color:#fff;border-radius:999px;padding:1px 9px;font-size:11px;font-weight:700}
@@ -422,7 +422,7 @@ footer a{color:var(--accent)}
 <script>
 const CATS={story:"クエスト / エピソード",md:"メモリアルダンジョン",cond:"所持・転職などの条件",none:"条件なし",unknown:"未公開"};
 const ATTRS=["スタンダード","プリティ","ビューティフル","エレガント","チャーミング","リファインド","マジェスティック","セレスティアル"];
-const ACOL={"スタンダード":"#2E86C1","プリティ":"#7D3C98","ビューティフル":"#5DADE2","エレガント":"#1F618D","チャーミング":"#27AE60","リファインド":"#C2185B","マジェスティック":"#8D6E63","セレスティアル":"#16A085"};
+const ACOL={"スタンダード":"#3B2D62","プリティ":"#57019F","ビューティフル":"#0013A5","エレガント":"#007E9E","チャーミング":"#009631","リファインド":"#1B6604","マジェスティック":"#704207","セレスティアル":"#981D1D"};
 const MATRIX={
 "スタンダード":[100,100,100,100,100,100,100,200],
 "プリティ":[100,100,50,200,100,100,100,100],
@@ -628,15 +628,15 @@ function memoRow(name){
     out.innerHTML="";
     if(!picks.length){ out.textContent="未設定"; out.classList.add("memoempty"); return; }
     out.classList.remove("memoempty");
-    const tally={};
-    picks.forEach(function(j){ const c=counterOf(j); if(c) tally[c]=(tally[c]||0)+1; });
     const arrow=document.createElement("span");
     arrow.className="memoarrow"; arrow.textContent="200%";
     out.appendChild(arrow);
-    Object.keys(tally).sort(function(a,b){return tally[b]-tally[a]}).forEach(function(c){
+    picks.forEach(function(j){
+      const c=counterOf(j);
+      if(!c) return;
       const tg=document.createElement("span");
       tg.className="atag"; tg.style.background=ACOL[c];
-      tg.textContent=c+(tally[c]>1?" ×"+tally[c]:"");
+      tg.textContent=c;
       out.appendChild(tg);
     });
   }
