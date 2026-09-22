@@ -144,6 +144,11 @@ h1 .star{color:var(--accent-2)}
   padding:14px 17px;
 }
 .row.is-done{background:var(--done-soft);border-color:#E3EDE6}
+.favbtn{appearance:none;border:none;background:none;padding:0 3px 0 0;margin:0 3px 0 0;font:inherit;font-size:18px;line-height:1;color:#D9CDBF;cursor:pointer;vertical-align:-1px;text-decoration:none}
+.favbtn:hover{color:#E0A526}
+.favbtn[aria-pressed="true"]{color:#E0A526}
+.favbtn:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-radius:4px}
+.row.is-fav{border-color:#EBCF8C;box-shadow:inset 3px 0 0 #E0A526}
 .row.is-done .q{color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--muted)}
 .tick{
   appearance:none;width:20px;height:20px;margin:4px 0 0;border-radius:7px;
@@ -514,6 +519,7 @@ DATA.forEach((d,n)=>{d.id="q"+n});
 const KEY="ro-coordinate-2026-progress";
 let done={};
 let memo={};
+let fav={};
 let db=null;
 
 function idolKey(d,i){return d.id+":"+i}
@@ -522,18 +528,18 @@ function setRow(d,on){d.i.forEach(function(_,i){const k=idolKey(d,i); if(on) don
 function loadLocal(){
   try{
     const raw=JSON.parse(localStorage.getItem(KEY)||"{}")||{};
-    if(raw&&(raw.v===2||raw.v===3)){ done=raw.d||{}; memo=(raw.v===3&&raw.m)?raw.m:{}; return; }
-    done={}; memo={};
+    if(raw&&(raw.v===2||raw.v===3)){ done=raw.d||{}; memo=(raw.v===3&&raw.m)?raw.m:{}; fav=(raw.f&&typeof raw.f==="object")?raw.f:{}; return; }
+    done={}; memo={}; fav={};
     DATA.forEach(function(d){ if(raw[d.id]) d.i.forEach(function(_,i){ done[idolKey(d,i)]=1; }); });
-  }catch(e){ done={}; memo={}; }
+  }catch(e){ done={}; memo={}; fav={}; }
 }
-function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify({v:3,d:done,m:memo}))}catch(e){}}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify({v:3,d:done,m:memo,f:fav}))}catch(e){}}
 
 const $=s=>document.querySelector(s);
 const list=$("#list"), search=$("#search"), cats=$("#cats"), hideDone=$("#hideDone");
 let activeCat="all", onlyTodo=false, activeRank=0;
 
-const SORTS={cat:"種別順",rank:"ランクが高い順",rankAsc:"ランクが低い順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
+const SORTS={cat:"種別順",fav:"☆を上に",rank:"ランクが高い順",rankAsc:"ランクが低い順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
 let sortMode="cat";
 
 function catButtons(){
@@ -777,7 +783,7 @@ function questInfo(d){
 function makeRow(d,tip){
   const st=rowState(d);
   const row=document.createElement("div");
-  row.className="row"+(st.all?" is-done":"")+(tip?" tip":"");
+  row.className="row"+(st.all?" is-done":"")+(tip?" tip":"")+(fav[d.q]?" is-fav":"");
   const cb=document.createElement("input");
   cb.type="checkbox";cb.className="tick";cb.checked=st.all;cb.indeterminate=st.some&&!st.all;
   cb.setAttribute("aria-label",d.q+" のアイドルをまとめてチェック");
@@ -787,6 +793,14 @@ function makeRow(d,tip){
 
   const q=document.createElement("p");
   q.className="q";q.textContent=d.q;
+  const fb=document.createElement("button");
+  fb.type="button"; fb.className="favbtn";
+  fb.textContent=fav[d.q]?"★":"☆";
+  fb.setAttribute("aria-pressed",!!fav[d.q]);
+  fb.setAttribute("aria-label",d.q+" をお気に入り");
+  fb.title=fav[d.q]?"☆を外す":"☆を付ける";
+  fb.onclick=function(ev){ ev.stopPropagation(); if(fav[d.q]) delete fav[d.q]; else fav[d.q]=1; saveLocal(); render(); };
+  q.insertBefore(fb,q.firstChild);
   const n=document.createElement("span");
   n.className="n";n.textContent=st.n+" / "+st.total+"体";
   q.appendChild(n);
@@ -894,13 +908,14 @@ function render(){
     if(sortMode==="skip") sorted.sort((a,b)=>(a.s||9999)-(b.s||9999)||b.i.length-a.i.length);
     if(sortMode==="eff")  sorted.sort((a,b)=>(eff(b)||-1)-(eff(a)||-1));
     if(sortMode==="idols")sorted.sort((a,b)=>b.i.length-a.i.length);
+    if(sortMode==="fav")  sorted.sort((a,b)=>(fav[b.q]?1:0)-(fav[a.q]?1:0));
     if(sortMode==="rank") sorted.sort((a,b)=>maxRank(b)-maxRank(a)||b.i.length-a.i.length);
     if(sortMode==="rankAsc") sorted.sort((a,b)=>{const A=maxRank(a),B=maxRank(b);return (A<0?99:A)-(B<0?99:B)||b.i.length-a.i.length;});
     const head=document.createElement("div");
     head.className="group-head";
     head.innerHTML='<h2></h2><span class="rule"></span><span class="count"></span>';
     head.querySelector("h2").textContent=SORTS[sortMode];
-    head.querySelector(".count").textContent=sorted.length+" 条件 / "+sorted.reduce((s,d)=>s+d.i.length,0)+" 体";
+    head.querySelector(".count").textContent=(sortMode==="fav"?"☆ "+sorted.filter(d=>fav[d.q]).length+" 件 / ":"")+sorted.length+" 条件 / "+sorted.reduce((s,d)=>s+d.i.length,0)+" 体";
     list.appendChild(head);
     const rows=document.createElement("div");rows.className="rows";
     sorted.forEach((d,idx)=>rows.appendChild(makeRow(d, sortMode==="eff" && idx<3 && d.s)));
@@ -952,7 +967,7 @@ function dataMsg(text,kind){
 }
 function countDone(o){ return Object.keys(o||{}).length; }
 function exportFile(){
-  const payload={app:"ro-coordinate-battle2026",v:3,savedAt:new Date().toISOString(),code:encodeProgress(),done:done,memo:memo};
+  const payload={app:"ro-coordinate-battle2026",v:3,savedAt:new Date().toISOString(),code:encodeProgress(),done:done,memo:memo,fav:fav};
   try{
     const blob=new Blob([JSON.stringify(payload,null,1)],{type:"application/json"});
     const url=URL.createObjectURL(blob);
@@ -975,6 +990,7 @@ function importFile(file){
     try{
       const j=JSON.parse(String(fr.result));
       if(j && j.memo && typeof j.memo==="object") memo=j.memo;
+      if(j && j.fav && typeof j.fav==="object") fav=j.fav;
       if(j && j.done && typeof j.done==="object") applyLoaded(j.done,"バックアップを読み込みました");
       else if(j && j.code) applyLoaded(decodeProgress(j.code),"バックアップを読み込みました");
       else dataMsg("このファイルには進捗データが入っていないようです。","ng");
