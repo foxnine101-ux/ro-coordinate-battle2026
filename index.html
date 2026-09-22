@@ -148,7 +148,11 @@ h1 .star{color:var(--accent-2)}
 .favbtn:hover{color:#E0A526}
 .favbtn[aria-pressed="true"]{color:#E0A526}
 .favbtn:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-radius:4px}
-.row.is-fav{border-color:#EBCF8C;box-shadow:inset 3px 0 0 #E0A526}
+.idolwrap{display:inline-flex;align-items:center}
+.idolwrap .favbtn,.locrow .favbtn{font-size:15px;margin:0 1px;padding:0 1px}
+.row.favcard{display:flex;flex-direction:column;gap:6px;border-color:#EBCF8C;box-shadow:inset 3px 0 0 #E0A526}
+.favtop{gap:8px}
+.favq{font-size:12px;color:var(--muted);line-height:1.5}
 .row.is-done .q{color:var(--ink-2);text-decoration:line-through;text-decoration-color:var(--muted)}
 .tick{
   appearance:none;width:20px;height:20px;margin:4px 0 0;border-radius:7px;
@@ -317,6 +321,7 @@ footer a{color:var(--accent)}
     <div class="chips" id="ranks" role="group" aria-label="ランクで絞り込み"></div>
     <div class="chips">
       <button class="chip" id="hideDone" aria-pressed="false" type="button">未クリアのみ</button>
+      <button class="chip" id="favOnly" aria-pressed="false" type="button">☆のみ表示</button>
     </div>
     <div class="chips" id="sorts" role="group" aria-label="並び替え"></div>
 <div class="chips"><button class="chip reset" id="reset" type="button" hidden>&#8634; 表示をリセット</button></div>
@@ -537,9 +542,9 @@ function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify({v:3,d:done,m:m
 
 const $=s=>document.querySelector(s);
 const list=$("#list"), search=$("#search"), cats=$("#cats"), hideDone=$("#hideDone");
-let activeCat="all", onlyTodo=false, activeRank=0;
+let activeCat="all", onlyTodo=false, activeRank=0, onlyFav=false;
 
-const SORTS={cat:"種別順",fav:"☆を上に",rank:"ランクが高い順",rankAsc:"ランクが低い順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
+const SORTS={cat:"種別順",rank:"ランクが高い順",rankAsc:"ランクが低い順",skip:"石片が安い順",eff:"コスパ順",idols:"解放数が多い順"};
 let sortMode="cat";
 
 function catButtons(){
@@ -620,6 +625,68 @@ function copyBtn(text,label){
   };
   return b;
 }
+const IDX={};
+DATA.forEach(function(d){ d.i.forEach(function(x,i){ IDX[x[0]]={d:d,i:i}; }); });
+function favNames(){ return Object.keys(fav).filter(function(n){ return !!IDX[n]; }); }
+function favClean(){ Object.keys(fav).forEach(function(k){ if(!IDX[k]) delete fav[k]; }); }
+function paintStar(b,on){ b.textContent=on?"\u2605":"\u2606"; b.setAttribute("aria-pressed",on); b.title=on?"☆を外す":"☆を付ける（☆のみ表示でまとめて見られます）"; }
+function starBtn(name){
+  const b=document.createElement("button");
+  b.type="button"; b.className="favbtn"; b.dataset.star=name;
+  b.setAttribute("aria-label",name+" をお気に入り");
+  paintStar(b,!!fav[name]);
+  b.onclick=function(ev){ ev.stopPropagation(); toggleFav(name); };
+  return b;
+}
+function toggleFav(name){
+  if(fav[name]) delete fav[name]; else fav[name]=1;
+  saveLocal();
+  if(onlyFav){ render(); return; }
+  document.querySelectorAll(".favbtn").forEach(function(b){ if(b.dataset.star===name) paintStar(b,!!fav[name]); });
+  updateFavChip();
+}
+function updateFavChip(){ const c=$("#favOnly"); if(!c) return; const n=favNames().length; c.textContent="☆のみ表示"+(n?"（"+n+"）":""); }
+function renderFav(){
+  const term=search.value.trim().toLowerCase();
+  const all=favNames();
+  const names=all.filter(function(n){ return !term || (n+" "+IDX[n].d.q).toLowerCase().includes(term); });
+  const head=document.createElement("div"); head.className="group-head";
+  head.innerHTML='<h2></h2><span class="rule"></span><span class="count"></span>';
+  head.querySelector("h2").textContent="☆ お気に入り";
+  head.querySelector(".count").textContent=names.length+" 体";
+  list.appendChild(head);
+  if(!names.length){
+    const e=document.createElement("div"); e.className="empty";
+    e.textContent=all.length?"検索に合うお気に入りがありません。":"キャラ名の横の☆を押すと、審査員メモごとここにまとまります。";
+    list.appendChild(e); return;
+  }
+  const rows=document.createElement("div"); rows.className="rows";
+  names.forEach(function(n){
+    const r=IDX[n], d=r.d, rk=d.i[r.i][1], k=idolKey(d,r.i), on=!!done[k];
+    const card=document.createElement("div"); card.className="row favcard"+(on?" is-done":"");
+    const top=document.createElement("div"); top.className="locrow favtop";
+    top.appendChild(starBtn(n));
+    const chip=document.createElement("button"); chip.type="button";
+    chip.className="idol"+(on?" on":""); chip.setAttribute("aria-pressed",on);
+    chip.title=on?n+" を未解放に戻す":n+" を解放済みにする";
+    const b=document.createElement("span"); b.className=rankClass(rk); b.textContent=rk===null?"?":"R"+rk;
+    const nm=document.createElement("span"); nm.className="nm"; nm.textContent=n;
+    chip.appendChild(b); chip.appendChild(nm);
+    chip.onclick=function(){ if(done[k]) delete done[k]; else done[k]=1; persist(); render(); };
+    top.appendChild(chip);
+    const l=LOC[n];
+    if(l){
+      const sp=document.createElement("span"); sp.className="lspot";
+      sp.textContent=(l[2]===null||l[2]===undefined||isNaN(l[2])) ? l[1] : (l[1]+"（"+(l[0]?l[0]+" ":"")+l[2]+","+l[3]+"）");
+      top.appendChild(sp);
+      const nb=naviBtn(l[0],l[2],l[3]) || copyBtn(n,"名前をコピー"); if(nb) top.appendChild(nb);
+    }
+    const q=document.createElement("div"); q.className="favq"; q.textContent=d.q;
+    card.appendChild(top); card.appendChild(q); card.appendChild(memoRow(n));
+    rows.appendChild(card);
+  });
+  list.appendChild(rows);
+}
 function memoRow(name){
   const box=document.createElement("div");
   box.className="memo";
@@ -688,7 +755,7 @@ function locList(d){
     const sp=document.createElement("span");
     sp.className="lspot";
     sp.textContent = (l[2]===null||l[2]===undefined||isNaN(l[2])) ? l[1] : (l[1]+"（"+(l[0]?l[0]+" ":"")+l[2]+","+l[3]+"）");
-    row.appendChild(rk); row.appendChild(nm); row.appendChild(sp);
+    row.appendChild(starBtn(pair[0])); row.appendChild(rk); row.appendChild(nm); row.appendChild(sp);
     const nb=naviBtn(l[0],l[2],l[3]) || copyBtn(pair[0],"名前をコピー");
     if(nb) row.appendChild(nb);
     const cell=document.createElement("div");
@@ -783,7 +850,7 @@ function questInfo(d){
 function makeRow(d,tip){
   const st=rowState(d);
   const row=document.createElement("div");
-  row.className="row"+(st.all?" is-done":"")+(tip?" tip":"")+(fav[d.q]?" is-fav":"");
+  row.className="row"+(st.all?" is-done":"")+(tip?" tip":"");
   const cb=document.createElement("input");
   cb.type="checkbox";cb.className="tick";cb.checked=st.all;cb.indeterminate=st.some&&!st.all;
   cb.setAttribute("aria-label",d.q+" のアイドルをまとめてチェック");
@@ -793,14 +860,6 @@ function makeRow(d,tip){
 
   const q=document.createElement("p");
   q.className="q";q.textContent=d.q;
-  const fb=document.createElement("button");
-  fb.type="button"; fb.className="favbtn";
-  fb.textContent=fav[d.q]?"★":"☆";
-  fb.setAttribute("aria-pressed",!!fav[d.q]);
-  fb.setAttribute("aria-label",d.q+" をお気に入り");
-  fb.title=fav[d.q]?"☆を外す":"☆を付ける";
-  fb.onclick=function(ev){ ev.stopPropagation(); if(fav[d.q]) delete fav[d.q]; else fav[d.q]=1; saveLocal(); render(); };
-  q.insertBefore(fb,q.firstChild);
   const n=document.createElement("span");
   n.className="n";n.textContent=st.n+" / "+st.total+"体";
   q.appendChild(n);
@@ -855,7 +914,9 @@ function makeRow(d,tip){
     nm.className="nm";nm.textContent=name;
     el.appendChild(b);el.appendChild(nm);
     el.onclick=()=>{ if(done[k]) delete done[k]; else done[k]=1; persist(); render(); };
-    idols.appendChild(el);
+    const iw=document.createElement("span"); iw.className="idolwrap";
+    iw.appendChild(el); iw.appendChild(starBtn(name));
+    idols.appendChild(iw);
   });
 
   body.appendChild(q);body.appendChild(meta);body.appendChild(idols);
@@ -879,6 +940,7 @@ function visible(){
 }
 
 function render(){
+  if(onlyFav){ list.innerHTML=""; renderFav(); stats(); return; }
   const items=visible();
   list.innerHTML="";
   if(!items.length){
@@ -908,14 +970,13 @@ function render(){
     if(sortMode==="skip") sorted.sort((a,b)=>(a.s||9999)-(b.s||9999)||b.i.length-a.i.length);
     if(sortMode==="eff")  sorted.sort((a,b)=>(eff(b)||-1)-(eff(a)||-1));
     if(sortMode==="idols")sorted.sort((a,b)=>b.i.length-a.i.length);
-    if(sortMode==="fav")  sorted.sort((a,b)=>(fav[b.q]?1:0)-(fav[a.q]?1:0));
     if(sortMode==="rank") sorted.sort((a,b)=>maxRank(b)-maxRank(a)||b.i.length-a.i.length);
     if(sortMode==="rankAsc") sorted.sort((a,b)=>{const A=maxRank(a),B=maxRank(b);return (A<0?99:A)-(B<0?99:B)||b.i.length-a.i.length;});
     const head=document.createElement("div");
     head.className="group-head";
     head.innerHTML='<h2></h2><span class="rule"></span><span class="count"></span>';
     head.querySelector("h2").textContent=SORTS[sortMode];
-    head.querySelector(".count").textContent=(sortMode==="fav"?"☆ "+sorted.filter(d=>fav[d.q]).length+" 件 / ":"")+sorted.length+" 条件 / "+sorted.reduce((s,d)=>s+d.i.length,0)+" 体";
+    head.querySelector(".count").textContent=sorted.length+" 条件 / "+sorted.reduce((s,d)=>s+d.i.length,0)+" 体";
     list.appendChild(head);
     const rows=document.createElement("div");rows.className="rows";
     sorted.forEach((d,idx)=>rows.appendChild(makeRow(d, sortMode==="eff" && idx<3 && d.s)));
@@ -990,7 +1051,7 @@ function importFile(file){
     try{
       const j=JSON.parse(String(fr.result));
       if(j && j.memo && typeof j.memo==="object") memo=j.memo;
-      if(j && j.fav && typeof j.fav==="object") fav=j.fav;
+      if(j && j.fav && typeof j.fav==="object"){ fav=j.fav; favClean(); }
       if(j && j.done && typeof j.done==="object") applyLoaded(j.done,"バックアップを読み込みました");
       else if(j && j.code) applyLoaded(decodeProgress(j.code),"バックアップを読み込みました");
       else dataMsg("このファイルには進捗データが入っていないようです。","ng");
@@ -1054,9 +1115,9 @@ function initDataPanel(){
   xc.addEventListener("click",function(){ box.hidden=true; });
   pb.addEventListener("click",askPersist);
 }
-function isDefaultView(){return sortMode==="cat"&&activeCat==="all"&&!onlyTodo&&!activeRank&&!search.value.trim();}
-function updateReset(){const b=$("#reset"); if(b) b.hidden=isDefaultView();}
-function resetView(){sortMode="cat";activeCat="all";onlyTodo=false;activeRank=0;search.value="";hideDone.setAttribute("aria-pressed","false");catButtons();render();search.focus();}
+function isDefaultView(){return sortMode==="cat"&&activeCat==="all"&&!onlyTodo&&!onlyFav&&!activeRank&&!search.value.trim();}
+function updateReset(){const b=$("#reset"); if(b) b.hidden=isDefaultView(); updateFavChip();}
+function resetView(){sortMode="cat";activeCat="all";onlyTodo=false;onlyFav=false;activeRank=0;const fo=$("#favOnly");if(fo)fo.setAttribute("aria-pressed","false");search.value="";hideDone.setAttribute("aria-pressed","false");catButtons();render();search.focus();}
 function stats(){
   let doneIdols=0,totalIdols=0,doneConds=0;
   DATA.forEach(function(x){const st=rowState(x);doneIdols+=st.n;totalIdols+=st.total;if(st.all) doneConds++;});
@@ -1081,7 +1142,11 @@ hideDone.addEventListener("click",()=>{
   render();
 });
 
+const favOnlyBtn=$("#favOnly");
+if(favOnlyBtn) favOnlyBtn.addEventListener("click",function(){ onlyFav=!onlyFav; favOnlyBtn.setAttribute("aria-pressed",onlyFav); render(); });
+
 loadLocal();
+favClean();
 initDataPanel();
 buildChart();
 catButtons();
